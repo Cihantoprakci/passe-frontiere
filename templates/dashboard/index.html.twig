@@ -14,13 +14,13 @@
                 {% if advice.best == 'train' %}
                     <h1>En ce moment, prenez le train.</h1>
                     {% if advice.gain > 0 %}
-                        <p class="muted">Il vous fera gagner {{ advice.gain }} minutes par rapport à la voiture.</p>
+                        <p class="muted">Il vous fera gagner {{ advice.gain }} minute{{ advice.gain > 1 ? 's' }} par rapport à la voiture.</p>
                     {% else %}
                         <p class="muted">Le train et la voiture mettent le même temps.</p>
                     {% endif %}
                 {% else %}
                     <h1>En ce moment, prenez la voiture.</h1>
-                    <p class="muted">Elle vous fera gagner {{ advice.gain }} minutes par rapport au train.</p>
+                    <p class="muted">Elle vous fera gagner {{ advice.gain }} minute{{ advice.gain > 1 ? 's' }} par rapport au train.</p>
                 {% endif %}
                 <a href="{{ app.user ? path('account') : path('app_login') }}">Modifier mon trajet</a>
             </div>
