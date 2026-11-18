@@ -21,6 +21,7 @@ class BorderReadingRecorder
         $now = new \DateTimeImmutable();
 
         foreach ($this->borderRepository->findActive() as $border) {
+            usleep(300000);
             $times = $this->tomTomClient->getTravelTimes($border);
             if (!$times) {
                 continue;
