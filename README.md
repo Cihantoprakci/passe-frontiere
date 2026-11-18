@@ -4,6 +4,8 @@ Application web pour les frontaliers de Haute-Savoie qui travaillent à Genève.
 
 Projet réalisé pour le module Booster Portfolio, B2 développement web, MyDigitalSchool Annecy.
 
+Site en ligne : https://passe-frontiere.ctdigitalweb.com
+
 ## Fonctionnalités
 
 - Tableau de bord : train ou voiture, avec le temps de trajet de chaque solution
@@ -108,6 +110,38 @@ https://passe-frontiere.ctdigitalweb.com/cron/releve?token=VOTRE_CRON_TOKEN
 ```
 
 Chaque appel enregistre un relevé par douane puis envoie les alertes qui doivent partir.
+
+## Mise en ligne
+
+Le site est hébergé chez IONOS (hébergement mutualisé, PHP 8.4, MariaDB). Le sous-domaine pointe sur le dossier `public`.
+
+Première installation sur le serveur :
+
+```bash
+git clone https://github.com/Cihantoprakci/passe-frontiere.git
+cd passe-frontiere
+```
+
+Créer le fichier `.env.local` avec `APP_ENV=prod`, `APP_DEBUG=0` et les variables listées plus haut, puis :
+
+```bash
+composer install --no-dev --optimize-autoloader
+php bin/console doctrine:migrations:migrate -n
+php bin/console asset-map:compile
+php bin/console cache:clear
+```
+
+La dernière migration ajoute les 6 douanes. En production il n'y a pas de fixtures : l'historique se remplit avec les vrais relevés.
+
+Pour une mise à jour :
+
+```bash
+git pull
+composer install --no-dev --optimize-autoloader
+php bin/console doctrine:migrations:migrate -n
+php bin/console asset-map:compile
+php bin/console cache:clear
+```
 
 ## Tests
 
