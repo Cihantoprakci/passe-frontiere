@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un compte | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <div class="container page narrow">
+        <div class="stack">
+            <h1>Créer un compte</h1>
+            <p class="muted">Gratuit. Il sert à garder votre trajet et à recevoir des alertes par e-mail.</p>
+        </div>
+
+        {{ form_start(form, {attr: {class: 'form', novalidate: 'novalidate'}}) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword) }}
+            <div class="checkbox">
+                {{ form_widget(form.agreePrivacy) }}
+                <label for="{{ form.agreePrivacy.vars.id }}">J'ai lu la <a href="{{ path('legal_privacy') }}">politique de confidentialité</a></label>
+            </div>
+            {{ form_errors(form.agreePrivacy) }}
+            <div>
+                <button class="button" type="submit">Créer mon compte</button>
+            </div>
+        {{ form_end(form) }}
+
+        <p>Déjà un compte&nbsp;? <a href="{{ path('app_login') }}">Se connecter</a></p>
+    </div>
+{% endblock %}

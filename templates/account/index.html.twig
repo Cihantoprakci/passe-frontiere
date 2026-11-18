@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <div class="container page">
+        <div class="stack">
+            <h1>Mon compte</h1>
+            <p class="muted">Connecté avec {{ user.email }}. <a href="{{ path('app_logout') }}">Se déconnecter</a></p>
+        </div>
+
+        <section class="box">
+            <h2 class="title-icon">{{ source('icons/route.svg') }} Mon trajet</h2>
+            {{ form_start(commuteForm, {attr: {class: 'form narrow', novalidate: 'novalidate'}}) }}
+                {{ form_row(commuteForm.stationFrom) }}
+                {{ form_row(commuteForm.border) }}
+                {{ form_row(commuteForm.leaveAt) }}
+                <div>
+                    <button class="button" type="submit">Enregistrer le trajet</button>
+                </div>
+            {{ form_end(commuteForm) }}
+        </section>
+
+        <section class="box">
+            <h2 class="title-icon">{{ source('icons/bell.svg') }} Mes alertes</h2>
+            <p class="muted">Un e-mail est envoyé si le retard dépasse votre seuil pendant le créneau choisi, une fois par heure au maximum.</p>
+
+            {% if not user.hasAlertsConsent %}
+                <div class="tip tip--warning">
+                    {{ source('icons/bell.svg') }}
+                    <p><strong>Les e-mails sont désactivés</strong><br>Activez-les plus bas pour recevoir vos alertes.</p>
+                </div>
+            {% endif %}
+
+            {% if user.alerts is not empty %}
+                <ul class="list">
+                    {% for alert in user.alerts %}
+                        <li>
+                            <span class="list__main">
+                                <strong>{{ alert.border.name }}, plus de {{ alert.thresholdMinutes }} min</strong><br>
+                                <span class="small muted">Entre {{ alert.windowStart|date('G \\h i') }} et {{ alert.windowEnd|date('G \\h i') }}{% if not alert.active %}, en pause{% endif %}</span>
+                            </span>
+                            <form method="post" action="{{ path('account_alert_toggle', {id: alert.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-alert-' ~ alert.id) }}">
+                                <button class="button button--secondary" type="submit">{{ alert.active ? 'Mettre en pause' : 'Activer' }}</button>
+                            </form>
+                            <form method="post" action="{{ path('account_alert_delete', {id: alert.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete-alert-' ~ alert.id) }}">
+                                <button class="button button--link" type="submit">Supprimer</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Vous n'avez pas encore d'alerte.</p>
+            {% endif %}
+
+            <h3>Ajouter une alerte</h3>
+            {{ form_start(alertForm, {attr: {class: 'form narrow', novalidate: 'novalidate'}}) }}
+                {{ form_row(alertForm.border) }}
+                {{ form_row(alertForm.thresholdMinutes) }}
+                <div class="grid grid--2">
+                    {{ form_row(alertForm.windowStart) }}
+                    {{ form_row(alertForm.windowEnd) }}
+                </div>
+                <div>
+                    <button class="button" type="submit">Ajouter l'alerte</button>
+                </div>
+            {{ form_end(alertForm) }}
+        </section>
+
+        <section class="box">
+            <h2 class="title-icon">{{ source('icons/clock.svg') }} Mes données</h2>
+            <form method="post" action="{{ path('account_consent') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('consent') }}">
+                <p>
+                    {% if user.hasAlertsConsent %}
+                        Vous acceptez de recevoir les alertes par e-mail.
+                    {% else %}
+                        Vous ne recevez aucun e-mail de notre part.
+                    {% endif %}
+                </p>
+                <button class="button button--secondary" type="submit">{{ user.hasAlertsConsent ? 'Ne plus recevoir d\'e-mails' : 'Recevoir les alertes par e-mail' }}</button>
+            </form>
+
+            <form method="post" action="{{ path('account_delete') }}" onsubmit="return confirm('Supprimer votre compte et toutes vos données ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete-account') }}">
+                <p class="muted">La suppression efface votre e-mail, votre trajet et vos alertes. Elle est définitive.</p>
+                <button class="button button--danger" type="submit">Supprimer mon compte</button>
+            </form>
+        </section>
+    </div>
+{% endblock %}

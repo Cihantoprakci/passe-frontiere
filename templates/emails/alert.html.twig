@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Alerte {{ alert.border.name }}</title>
+</head>
+<body style="margin: 0; padding: 24px; background: #f2f6fb; font-family: Arial, sans-serif; font-size: 16px; color: #1b2430;">
+    <div style="max-width: 520px; margin: 0 auto; padding: 32px; background: #ffffff; border-radius: 12px;">
+        <p style="margin: 0 0 24px; font-size: 20px; font-weight: bold;">Passe-<span style="color: #1a5dc8;">Frontière</span></p>
+        <h1 style="margin: 0 0 16px; font-size: 24px;">Douane de {{ alert.border.name }}&nbsp;: {{ reading.delayMinutes }} min de retard</h1>
+        <p style="margin: 0 0 16px;">Le retard dépasse votre seuil de {{ alert.thresholdMinutes }} minutes. Mesure prise à {{ reading.measuredAt|date('G \\h i') }}.</p>
+        <p style="margin: 0 0 24px;">Pensez au Léman Express ou à un autre passage.</p>
+        <p style="margin: 0 0 32px;">
+            <a href="{{ url('dashboard') }}" style="display: inline-block; padding: 12px 20px; background: #1a5dc8; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold;">Voir le trajet conseillé</a>
+        </p>
+        <p style="margin: 0; font-size: 14px; color: #4b5563;">Vous recevez cet e-mail car vous avez créé une alerte. <a href="{{ url('account') }}" style="color: #1a5dc8;">Gérer mes alertes</a></p>
+    </div>
+</body>
+</html>
