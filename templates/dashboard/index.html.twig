@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <section class="section">
+        <div class="container hero">
+            <img class="photo hero__photo" src="{{ asset('images/bardonnex.webp') }}" alt="La douane autoroutière de Bardonnex, avec le Salève au fond" width="1200" height="800">
+            <div class="hero__text">
+                <p class="icon-text muted small">
+                    {{ source('icons/route.svg') }}
+                    {{ station }} vers {{ arrival }}{% if leaveAt %}, départ à {{ leaveAt|date('G \\h i') }}{% endif %}
+                </p>
+                {% if advice.best == 'train' %}
+                    <h1>En ce moment, prenez le train.</h1>
+                    {% if advice.gain > 0 %}
+                        <p class="muted">Il vous fera gagner {{ advice.gain }} minutes par rapport à la voiture.</p>
+                    {% else %}
+                        <p class="muted">Le train et la voiture mettent le même temps.</p>
+                    {% endif %}
+                {% else %}
+                    <h1>En ce moment, prenez la voiture.</h1>
+                    <p class="muted">Elle vous fera gagner {{ advice.gain }} minutes par rapport au train.</p>
+                {% endif %}
+                <a href="{{ app.user ? path('account') : path('app_login') }}">Modifier mon trajet</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container grid grid--2" aria-label="Comparaison train et voiture">
+        <article class="box {{ advice.best == 'train' ? 'box--selected' }}">
+            <div class="mode__head">
+                <h2 class="mode__name">{{ source('icons/train.svg') }} Train</h2>
+                {% if advice.best == 'train' %}<span class="badge">Le plus rapide</span>{% endif %}
+            </div>
+            {% if train %}
+                <p class="big-number {{ advice.best == 'train' ? 'big-number--blue' }}">{{ trainMinutes }} min</p>
+                <p class="muted">{{ train.line }} à {{ train.departure|date('G \\h i') }}{% if train.platform %}, voie {{ train.platform }}{% endif %}</p>
+                <div>
+                    {% if train.delay > 0 %}
+                        {{ include('partials/_status.html.twig', {status: 'ralenti', text: '+' ~ train.delay ~ ' min'}) }}
+                    {% else %}
+                        {{ include('partials/_status.html.twig', {status: 'fluide', text: 'À l\'heure'}) }}
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="muted">Les horaires ne sont pas disponibles pour le moment.</p>
+            {% endif %}
+        </article>
+
+        <article class="box {{ advice.best == 'car' ? 'box--selected' }}">
+            <div class="mode__head">
+                <h2 class="mode__name">{{ source('icons/car.svg') }} Voiture</h2>
+                {% if advice.best == 'car' %}<span class="badge">Le plus rapide</span>{% endif %}
+            </div>
+            <p class="big-number {{ advice.best == 'car' ? 'big-number--blue' }}">{{ carMinutes }} min</p>
+            <p class="muted">Par la douane de {{ border.name }}</p>
+            {% if reading %}
+                <div>{{ include('partials/_status.html.twig', {status: reading.status, text: '+' ~ reading.delayMinutes ~ ' min à la douane'}) }}</div>
+            {% endif %}
+        </article>
+    </section>
+
+    <section class="section section--soft" style="margin-top: var(--space)">
+        <div class="container grid">
+            <h2>Votre trajet en détail</h2>
+            <div class="grid grid--3">
+                <article class="box">
+                    {{ source('icons/border.svg') }}
+                    <p class="small muted">Votre douane</p>
+                    <h3>{{ border.name }}</h3>
+                    {% if reading %}
+                        <div>{{ include('partials/_status.html.twig', {status: reading.status, text: '+' ~ reading.delayMinutes ~ ' min'}) }}</div>
+                    {% endif %}
+                    <a href="{{ path('border_show', {slug: border.slug}) }}">Voir les heures creuses</a>
+                </article>
+                <article class="box">
+                    {{ source('icons/train.svg') }}
+                    <p class="small muted">Votre train</p>
+                    {% if train %}
+                        <h3>{{ train.departure|date('G \\h i') }}, {{ train.line }} vers {{ train.direction }}</h3>
+                    {% else %}
+                        <h3>Horaires indisponibles</h3>
+                    {% endif %}
+                    <a href="{{ path('train_index', {gare: station}) }}">Voir les autres départs</a>
+                </article>
+                <article class="box">
+                    {{ source('icons/bell.svg') }}
+                    <p class="small muted">Votre alerte</p>
+                    {% if alert %}
+                        <h3>{{ alert.border.name }} après {{ alert.thresholdMinutes }} min</h3>
+                        <p class="small muted">De {{ alert.windowStart|date('G \\h') }} à {{ alert.windowEnd|date('G \\h') }}</p>
+                        <a href="{{ path('account') }}">Gérer mes alertes</a>
+                    {% else %}
+                        <h3>Aucune alerte</h3>
+                        <p class="small muted">Recevez un e-mail quand votre douane bouchonne.</p>
+                        <a href="{{ app.user ? path('account') : path('app_register') }}">Créer une alerte</a>
+                    {% endif %}
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <div class="container infos">
+        {% if weather %}
+            <p class="icon-text">{{ source('icons/weather.svg') }} {{ weather.temperature }} °C, {{ weather.description }} à Annemasse</p>
+        {% endif %}
+        {% if rate %}
+            <p class="icon-text">{{ source('icons/euro.svg') }} 1 € = {{ rate|number_format(4, ',') }} CHF aujourd'hui</p>
+        {% endif %}
+        {% if reading %}
+            <p class="icon-text">{{ source('icons/clock.svg') }} Douane mise à jour à {{ reading.measuredAt|date('G \\h i') }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment on calcule le retard | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <div class="container page">
+        <div class="stack">
+            <h1 class="title-icon">{{ source('icons/clock.svg') }} Comment on calcule le retard</h1>
+            <p class="muted">Aucune donnée officielle n'existe&nbsp;: on le mesure nous-mêmes, toutes les 15 minutes.</p>
+        </div>
+
+        <figure class="schema">
+            <div class="schema__road" aria-hidden="true">
+                <span class="schema__point"><span class="schema__dot"></span>France</span>
+                <hr>
+                <span class="schema__point">{{ source('icons/border.svg') }}Douane</span>
+                <hr>
+                <span class="schema__point"><span class="schema__dot"></span>Suisse</span>
+            </div>
+            <div class="grid grid--3">
+                <div class="box">
+                    <p class="small muted">Temps avec le trafic</p>
+                    <p class="medium-number">9 min</p>
+                </div>
+                <div class="box">
+                    <p class="small muted">Temps sans trafic</p>
+                    <p class="medium-number">2 min</p>
+                </div>
+                <div class="box">
+                    <p class="small muted">Retard estimé</p>
+                    <p class="medium-number big-number--blue">7 min</p>
+                </div>
+            </div>
+            <figcaption class="visually-hidden">Exemple&nbsp;: 9 minutes avec le trafic moins 2 minutes sans trafic donnent 7 minutes de retard.</figcaption>
+        </figure>
+
+        <ol class="grid grid--3">
+            <li class="stack">
+                {{ source('icons/border.svg') }}
+                <h2 class="small-title">1. Un tronçon par douane</h2>
+                <p class="muted">Environ 1 km, d'un point en France à un point en Suisse.</p>
+            </li>
+            <li class="stack">
+                {{ source('icons/clock.svg') }}
+                <h2 class="small-title">2. Une mesure toutes les 15 minutes</h2>
+                <p class="muted">Le service de trafic TomTom donne le temps actuel et le temps sans bouchon.</p>
+            </li>
+            <li class="stack">
+                {{ source('icons/car.svg') }}
+                <h2 class="small-title">3. La différence, c'est le retard</h2>
+                <p class="muted">Elle est enregistrée pour calculer les heures creuses de chaque douane.</p>
+            </li>
+        </ol>
+
+        <div class="tip tip--warning">
+            {{ source('icons/bell.svg') }}
+            <p><strong>Ce que la mesure ne voit pas</strong><br>Un contrôle surprise ou un accident très récent peut ralentir le passage avant que le trafic ne le montre. Le chiffre reste une estimation.</p>
+        </div>
+    </div>
+{% endblock %}

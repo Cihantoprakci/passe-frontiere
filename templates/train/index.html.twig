@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Prochains trains vers Genève | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <div class="container page">
+        <div class="stack">
+            <h1 class="title-icon">{{ source('icons/train.svg') }} Prochains trains vers Genève</h1>
+            <p class="muted">Léman Express et trains régionaux, horaires en temps réel</p>
+        </div>
+
+        <form class="form narrow" method="get" action="{{ path('train_index') }}">
+            <div>
+                <label for="gare">Gare de départ</label>
+                <select id="gare" name="gare">
+                    {% for name in stations %}
+                        <option value="{{ name }}" {% if name == station %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button class="button button--secondary" type="submit">Afficher les départs</button>
+            </div>
+        </form>
+
+        {% if next %}
+            <section class="box box--selected">
+                {{ source('icons/train.svg') }}
+                <p class="small muted">Prochain train</p>
+                <h2>{{ next.departure|date('G \\h i') }}, {{ next.line }} vers {{ next.direction }}{% if next.platform %}, voie {{ next.platform }}{% endif %}</h2>
+                <p class="muted">Arrivée à {{ arrival }} à {{ next.arrival|date('G \\h i') }}, soit {{ next.minutes }} minutes de trajet</p>
+                <div>
+                    {% if next.delay > 0 %}
+                        {{ include('partials/_status.html.twig', {status: 'ralenti', text: '+' ~ next.delay ~ ' min'}) }}
+                    {% else %}
+                        {{ include('partials/_status.html.twig', {status: 'fluide', text: 'À l\'heure'}) }}
+                    {% endif %}
+                </div>
+            </section>
+
+            <section>
+                <h2>Départs suivants</h2>
+                <ul class="list">
+                    {% for train in others %}
+                        <li>
+                            <span class="medium-number">{{ train.departure|date('G \\h i') }}</span>
+                            <span class="list__main">
+                                <strong>{{ train.line }} vers {{ train.direction }}</strong><br>
+                                <span class="small muted">{% if train.platform %}Voie {{ train.platform }}, {% endif %}arrivée à {{ train.arrival|date('G \\h i') }}</span>
+                            </span>
+                            {% if train.delay > 0 %}
+                                {{ include('partials/_status.html.twig', {status: 'ralenti', text: '+' ~ train.delay ~ ' min'}) }}
+                            {% else %}
+                                {{ include('partials/_status.html.twig', {status: 'fluide', text: 'À l\'heure'}) }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% else %}
+            <p class="tip">{{ source('icons/clock.svg') }} Les horaires ne sont pas disponibles pour le moment. Réessayez dans une minute.</p>
+        {% endif %}
+
+        <p class="small muted">Horaires des CFF, via transport.opendata.ch.</p>
+    </div>
+{% endblock %}

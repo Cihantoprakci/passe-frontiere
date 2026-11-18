@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Douane de {{ border.name }} | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <div class="container page">
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+            <a href="{{ path('border_index') }}">Douanes</a>
+            {{ source('icons/chevron.svg') }}
+            <span class="muted">{{ border.name }}</span>
+        </nav>
+
+        <div class="grid" style="gap: 12px">
+            <h1 class="title-icon">{{ source('icons/border.svg') }} Douane de {{ border.name }}</h1>
+            <p class="muted">{{ border.road }}, entre {{ border.frenchSide }} et {{ border.swissSide }}</p>
+        </div>
+
+        {% if border.photo %}
+            <img class="photo border-photo" src="{{ asset('images/' ~ border.photo) }}" alt="Le poste de douane de {{ border.name }}" width="1200" height="400">
+        {% endif %}
+
+        <div class="grid grid--2">
+            <div class="box box--soft">
+                <p class="icon-text small"><span>{{ source('icons/car.svg') }}</span> Retard maintenant</p>
+                {% if reading %}
+                    <p class="icon-text">
+                        <span class="big-number">+{{ reading.delayMinutes }} min</span>
+                        {{ include('partials/_status.html.twig', {status: reading.status}) }}
+                    </p>
+                {% else %}
+                    <p>Pas encore de relevé.</p>
+                {% endif %}
+            </div>
+            <div class="box box--soft">
+                <p class="icon-text small"><span>{{ source('icons/clock.svg') }}</span> Meilleure heure le matin</p>
+                <p class="big-number big-number--blue">Vers {{ bestHour }} h</p>
+            </div>
+        </div>
+
+        <section class="box chart-box">
+            <h2>À quelle heure passer&nbsp;?</h2>
+            <nav class="days" aria-label="Choisir le jour">
+                {% for number, name in days %}
+                    <a href="{{ path('border_show', {slug: border.slug, jour: number}) }}" {% if number == day %}aria-current="true"{% endif %}>{{ name|capitalize }}</a>
+                {% endfor %}
+            </nav>
+
+            {% if not hasData %}
+                <p>Pas encore assez de relevés pour ce jour.</p>
+            {% else %}
+                <p>
+                    {% if busyRanges is empty %}
+                        Le {{ days[day] }}, le retard reste sous 10 minutes toute la journée.
+                    {% else %}
+                        Le {{ days[day] }}, évitez
+                        {% for range in busyRanges %}{{ range[0] }} h à {{ range[1] }} h{{ not loop.last ? ' et ' }}{% endfor %}&nbsp;: le retard dépasse 10 minutes.
+                    {% endif %}
+                </p>
+                <div style="height: 260px">
+                    {{ render_chart(chart, {'role': 'img', 'aria-label': 'Retard moyen par heure le ' ~ days[day]}) }}
+                </div>
+                <p class="small muted">Moyenne des 5 dernières semaines. Barres foncées&nbsp;: plus de 10 minutes.</p>
+            {% endif %}
+        </section>
+
+        <p class="icon-text">
+            <a class="button" href="{{ app.user ? path('account') : path('app_register') }}">{{ source('icons/bell.svg') }} Me prévenir quand ça bouchonne</a>
+            <a href="{{ path('method') }}">Comment le retard est calculé</a>
+        </p>
+    </div>
+{% endblock %}

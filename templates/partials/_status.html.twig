@@ -1,0 +1,2 @@
+{% set labels = {fluide: 'Fluide', ralenti: 'Ralenti', bouche: 'Bouché'} %}
+<span class="status status--{{ status }}">{{ text ?? labels[status] }}</span>

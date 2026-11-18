@@ -1,0 +1,25 @@
+{% set route = app.request.attributes.get('_route') %}
+<header class="header" data-controller="menu">
+    <div class="container header__inner">
+        <a class="logo" href="{{ path('dashboard') }}">Passe-<span>Frontière</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="menu" data-menu-target="button" data-action="menu#toggle">
+            <span data-menu-target="label">Menu</span>
+            {{ source('icons/menu.svg') }}
+        </button>
+        <nav class="nav" id="menu" aria-label="Navigation principale" data-menu-target="nav">
+            <ul class="nav__list">
+                <li><a href="{{ path('dashboard') }}" {% if route == 'dashboard' %}aria-current="page"{% endif %}>Tableau de bord</a></li>
+                <li><a href="{{ path('border_index') }}" {% if route starts with 'border' %}aria-current="page"{% endif %}>Douanes</a></li>
+                <li><a href="{{ path('train_index') }}" {% if route == 'train_index' %}aria-current="page"{% endif %}>Trains</a></li>
+                <li><a href="{{ path('method') }}" {% if route == 'method' %}aria-current="page"{% endif %}>Méthode</a></li>
+            </ul>
+            <ul class="nav__list">
+                {% if app.user %}
+                    <li><a href="{{ path('account') }}" {% if route starts with 'account' %}aria-current="page"{% endif %}>Mon compte</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}" {% if route == 'app_login' %}aria-current="page"{% endif %}>Connexion</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>

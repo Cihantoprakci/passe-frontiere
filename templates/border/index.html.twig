@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les douanes du Genevois | Passe-Frontière{% endblock %}
+
+{% block body %}
+    <div class="container page">
+        <div class="grid" style="gap: 12px">
+            <h1 class="title-icon">{{ source('icons/border.svg') }} Les douanes du Genevois</h1>
+            {% if fastest %}
+                <p class="icon-text muted">{{ source('icons/clock.svg') }} Retard estimé en ce moment, mis à jour à {{ fastest.measuredAt|date('G \\h i') }}</p>
+            {% endif %}
+        </div>
+
+        {% if fastest %}
+            <p class="tip">{{ source('icons/car.svg') }} La plus rapide en ce moment&nbsp;: {{ fastest.border.name }}, +{{ fastest.delayMinutes }} min.</p>
+        {% endif %}
+
+        <ul class="grid grid--3">
+            {% for reading in readings %}
+                <li class="box">
+                    <h2 style="font-size: 20px">{{ reading.border.name }}</h2>
+                    <p class="small muted">{{ reading.border.frenchSide }}</p>
+                    <p class="icon-text">
+                        <span class="medium-number">+{{ reading.delayMinutes }} min</span>
+                        {{ include('partials/_status.html.twig', {status: reading.status}) }}
+                    </p>
+                    <a href="{{ path('border_show', {slug: reading.border.slug}) }}">Voir les heures creuses<span class="visually-hidden"> de {{ reading.border.name }}</span></a>
+                </li>
+            {% else %}
+                <li>Aucun relevé pour le moment.</li>
+            {% endfor %}
+        </ul>
+
+        <p><a href="{{ path('method') }}">Comment le retard est calculé</a></p>
+    </div>
+{% endblock %}

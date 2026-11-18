@@ -1,0 +1,132 @@
+.hero {
+  display: grid;
+  gap: 24px;
+  align-items: center;
+}
+
+.hero__text {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.hero__photo {
+  aspect-ratio: 3 / 2;
+}
+
+.mode__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mode__name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mode__name svg {
+  width: 32px;
+}
+
+.infos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  padding-block: 40px;
+  color: var(--color-muted);
+  font-size: 16px;
+}
+
+.border-photo {
+  height: 320px;
+}
+
+.chart-box {
+  display: grid;
+  gap: 20px;
+}
+
+.chart-box canvas {
+  max-height: 260px;
+}
+
+.schema {
+  display: grid;
+  gap: 24px;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: var(--color-soft);
+}
+
+.schema__road {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.schema__road hr {
+  flex: 1;
+  height: 4px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--color-blue);
+}
+
+.schema__point {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.schema__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-blue);
+}
+
+.schema__point svg {
+  width: 32px;
+  color: var(--color-blue);
+}
+
+.narrow {
+  max-width: 560px;
+}
+
+.legal {
+  display: grid;
+  gap: 32px;
+  max-width: 760px;
+}
+
+.legal section {
+  display: grid;
+  gap: 8px;
+}
+
+@media (min-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  .hero__photo {
+    order: 2;
+  }
+}
+
+@media (max-width: 699px) {
+  .border-photo {
+    height: 200px;
+  }
+
+  .schema {
+    padding: 20px;
+  }
+}
